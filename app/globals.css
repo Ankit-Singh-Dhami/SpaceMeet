@@ -1,2 +1,32 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
+/* H1 Header */
+h1.ce-header {
+  @apply text-3xl font-bold;
+}
+
+/* H2 Header */
+h2.ce-header {
+  @apply text-2xl font-semibold;
+}
+
+/* H3 Header */
+h3.ce-header {
+  @apply text-xl font-semibold;
+}
+
+/* H4 Header */
+h4.ce-header {
+  @apply text-lg font-semibold;
+}
+
+/* H5 Header */
+h5.ce-header {
+  @apply text-base font-semibold;
+}
+
+/* H6 Header */
+h6.ce-header {
+  @apply text-base font-medium;
+}
