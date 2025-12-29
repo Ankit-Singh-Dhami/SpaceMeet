@@ -25,6 +25,7 @@ It is built for students, teams, startups, and communities who want a **simple b
 - 🎨 Interactive whiteboard
 - ⚡ Fast and responsive UI
 - ☁️ Cloud-based database
+- 
 
 ---
 
@@ -45,12 +46,3 @@ It is built for students, teams, startups, and communities who want a **simple b
 
 ---
 
-## 📁 Project Structure (Overview)
-
-spacemeet/
-├── app/ # Next.js app router
-├── components/ # Reusable UI components
-├── convex/ # Convex backend functions & schema
-├── lib/ # Utilities and helpers
-├── public/ # Static assets
-└── README.md
