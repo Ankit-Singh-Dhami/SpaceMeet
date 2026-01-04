@@ -12,38 +12,44 @@ const FileId = ({ params }: any) => {
   const [fileId, setFileId] = useState<Id<"files"> | null>(null);
   const [triggerSave, setTriggerSave] = useState(false);
   const [fileData, setFileData] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"document" | "both" | "canvas">(
+    "document"
+  ); // NEW
   const convex = useConvex();
 
-  // ✅ 1. Resolve params
   useEffect(() => {
     const resolveParams = async () => {
       const resolvedParams = await params;
       setFileId(resolvedParams.fileId as Id<"files">);
     };
-
     resolveParams();
   }, [params]);
 
-  // ✅ 2. Fetch file after fileId exists
   useEffect(() => {
     const fetchFile = async () => {
-      if (!fileId) return; // <-- guard here
+      if (!fileId) return;
       const result = await convex.query(api.file.getFileById, { _id: fileId });
       setFileData(result);
-      console.log("fileId", fileId);
-      console.log("file data", result);
-      return result;
     };
-
     fetchFile();
   }, [fileId]);
 
   return (
     <div className="h-screen flex flex-col">
-      <Header onSave={() => setTriggerSave((prev) => !prev)} />
+      <Header
+        onSave={() => setTriggerSave((prev) => !prev)}
+        fileData={fileData}
+        setActiveTab={setActiveTab} // pass setter
+      />
 
       <div className="flex flex-1">
-        <div className="w-1/2 border-r p-4">
+        {/* Editor */}
+        <div
+          className={`p-4 border-r transition-all duration-300
+      ${activeTab === "document" ? "w-full" : activeTab === "both" ? "w-1/2" : "w-0"}
+      ${activeTab === "canvas" ? "overflow-hidden" : ""}
+    `}
+        >
           {fileId && (
             <Editor
               triggerSave={triggerSave}
@@ -53,12 +59,20 @@ const FileId = ({ params }: any) => {
           )}
         </div>
 
-        <div className="w-1/2 h-screen">
-          <Canvas
-            triggerSave={triggerSave}
-            fileId={fileId}
-            fileData={fileData}
-          />
+        {/* Canvas */}
+        <div
+          className={`h-screen transition-all duration-300
+      ${activeTab === "canvas" ? "w-full" : activeTab === "both" ? "w-1/2" : "w-0"}
+      ${activeTab === "document" ? "overflow-hidden" : ""}
+    `}
+        >
+          {fileId && (
+            <Canvas
+              triggerSave={triggerSave}
+              fileId={fileId}
+              fileData={fileData}
+            />
+          )}
         </div>
       </div>
     </div>

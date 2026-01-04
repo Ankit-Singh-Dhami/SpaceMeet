@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { BookOpen, Github, Archive, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useConvex, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { FileListContext } from "@/app/_context/FileListContext";
 import Constant from "@/app/_constant/Constant";
 import PricingDailog from "./PricingDailog";
@@ -28,35 +28,20 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
   ======================= */
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");
-  const [totalFiles, settotalFiles] = useState<number>(0);
-  const { FileList_, setFileList_ } = useContext(FileListContext);
 
-  const convex = useConvex();
   /* =======================
-     Menu
+     Context
   ======================= */
-  const menuList = [
-    {
-      label: "Getting Started",
-      href: "/getting-started",
-      icon: BookOpen,
-    },
-    {
-      label: "GitHub",
-      href: "https://github.com",
-      icon: Github,
-    },
-    {
-      label: "Archive",
-      href: "/archive",
-      icon: Archive,
-    },
-  ];
+  const { FileList_, refreshFileList } = useContext(FileListContext);
+
+  /* =======================
+     Derived State
+  ======================= */
+  const totalFiles = FileList_?.length ?? 0;
 
   /* =======================
      Create File Handler
   ======================= */
-
   const createFile = useMutation(api.file.createFile);
 
   const handleCreateFile = async () => {
@@ -67,22 +52,18 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
 
     try {
       await createFile({
-        fileName: fileName,
-        teamId: selectedTeam?._id, // make sure selectedTeam is passed as prop
+        fileName,
+        teamId: selectedTeam?._id,
         createdBy: user?.email,
         archive: false,
         document: "",
         whiteboard: "",
-      }).then((res) => {
-        if (res) {
-          getFile();
-          toast.success("File created successfully!");
-        } else {
-          toast.error("Failed to create file.");
-        }
       });
 
-      // Reset input
+      // Refresh global file list
+      await refreshFileList();
+
+      toast.success("File created successfully!");
       setFileName("");
       setError("");
     } catch (err) {
@@ -91,34 +72,28 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
     }
   };
 
-  const getFile = async () => {
-    const result = await convex.query(api.file.getFile, {
-      teamId: selectedTeam?._id,
-    });
-    setFileList_(result);
-    settotalFiles(result?.length);
-  };
-
-  useEffect(() => {
-    selectedTeam && getFile();
-  }, [selectedTeam]);
-
+  /* =======================
+     UI
+  ======================= */
   return (
     <div className="mt-6 px-4 flex flex-col gap-4">
-      {/* =======================
-         Menu List
-      ======================= */}
+      {/* Menu List */}
       <ul className="flex flex-col gap-1">
-        {menuList.map((item) => {
+        {[
+          {
+            label: "Getting Started",
+            href: "/getting-started",
+            icon: BookOpen,
+          },
+          { label: "GitHub", href: "https://github.com", icon: Github },
+          { label: "Archive", href: "/archive", icon: Archive },
+        ].map((item) => {
           const Icon = item.icon;
-
           return (
             <li key={item.label}>
               <Link
                 href={item.href}
-                className="flex items-center gap-1 px-3 py-1
-                           text-[0.7rem] font-medium rounded-md
-                           hover:bg-gray-100 transition-all"
+                className="flex items-center gap-1 px-3 py-1 text-[0.7rem] font-medium rounded-md hover:bg-gray-100"
               >
                 <Icon className="h-4 w-4" />
                 {item.label}
@@ -128,9 +103,7 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
         })}
       </ul>
 
-      {/* =======================
-         New File Dialog
-      ======================= */}
+      {/* New File Dialog */}
       <Dialog>
         <DialogTrigger asChild>
           <Button className="w-full bg-blue-600 hover:bg-blue-700 gap-2 text-white">
@@ -148,7 +121,6 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
               </DialogDescription>
             </DialogHeader>
 
-            {/* Input */}
             <Input
               value={fileName}
               onChange={(e) => {
@@ -156,25 +128,15 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
                 setError("");
               }}
               placeholder="Enter file name"
-              className="
-              h-9
-              text-sm
-              rounded-md
-              border-gray-300
-              focus:border-blue-500
-              focus:ring-2
-              focus:ring-blue-500/30
-            "
             />
 
-            {/* Error */}
-            {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+            {error && <p className="text-xs text-red-500">{error}</p>}
 
-            <DialogFooter className="sm:justify-end">
+            <DialogFooter>
               <DialogClose asChild>
                 <Button
+                  className="bg-blue-500 text-white hover:bg-blue-700"
                   onClick={handleCreateFile}
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
                 >
                   Create
                 </Button>
@@ -186,15 +148,17 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
         )}
       </Dialog>
 
-      {/* =======================
-         Usage Section
-      ======================= */}
+      {/* Usage Section */}
       <div className="bg-gray-100 rounded-lg p-3 flex flex-col gap-2">
-        {/* Progress Bar */}
         <div className="w-full h-2 bg-gray-300 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 rounded-full transition-all"
-            style={{ width: `${(totalFiles / 5) * 100}%` }}
+            className="h-full bg-blue-600 rounded-full transition-all duration-300"
+            style={{
+              width: `${Math.min(
+                (totalFiles / Constant.MAX_FREE_FILE) * 100,
+                100
+              )}%`,
+            }}
           />
         </div>
 

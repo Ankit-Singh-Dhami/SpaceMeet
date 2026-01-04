@@ -1,3 +1,7 @@
 import { createContext } from "react";
 
-export const FileListContext = createContext<any>(undefined);
+export const FileListContext = createContext<any>({
+  FileList_: [],
+  setFileList_: () => {},
+  refreshFileList: async () => {},
+});

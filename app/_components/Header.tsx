@@ -16,10 +16,7 @@ export default function Header() {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  d="M0.41 10.3847C1.14777 7.4194 2.85643 4.7861 5.2639 2.90424C7.6714 1.02234 10.6393 0 13.695 0C16.7507 0 19.7186 1.02234 22.1261 2.90424C24.5336 4.7861 26.2422 7.4194 26.98 10.3847H25.78C23.7557 10.3549 21.7729 10.9599 20.11 12.1147H19.81H19.67H19.37H19.37C17.6924 10.9866 15.7166 10.3841 13.695 10.3841C11.6734 10.3841 9.6976 10.9866 8.02 12.1147C7.824 12.2477 7.7238 12.2477 7.72 12.3047H7.58C7.4762 12.2477 7.376 12.1842 7.28 12.1147C5.6171 10.9599 3.6343 10.3549 1.61 10.3847H0.41Z"
-                  fill="currentColor"
-                />
+                <path />
               </svg>
             </a>
           </div>
@@ -54,12 +51,12 @@ export default function Header() {
             <div className="sm:flex sm:gap-4">
               <LoginLink
                 postLoginRedirectURL="/dashboard"
-                className="rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm dark:hover:bg-teal-500"
+                className="rounded-md bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm dark:hover:bg-violet-500"
               >
                 Login
               </LoginLink>
 
-              <RegisterLink className="hidden sm:flex rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75">
+              <RegisterLink className="hidden sm:flex rounded-md bg-violet-100 px-5 py-2.5 text-sm font-medium text-violet-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75">
                 Register
               </RegisterLink>
             </div>

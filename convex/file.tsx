@@ -32,6 +32,16 @@ export const getFile = query({
   },
 });
 
+export const deleteFile = mutation({
+  args: {
+    _id: v.id("files"), // ID of the file to delete
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args._id); // deletes the file
+    return { success: true };
+  },
+});
+
 export const updateDocument = mutation({
   args: {
     _id: v.id("files"),

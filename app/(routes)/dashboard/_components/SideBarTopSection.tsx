@@ -120,7 +120,10 @@ const SideBarTopSection: React.FC<SideBarTopSectionProps> = ({
           </button>
         </PopoverTrigger>
 
-        <PopoverContent align="start" className="w-50 p-1">
+        <PopoverContent
+          align="start"
+          className="w-50 p-1 bg-white dark:bg-gray-900  shadow-md"
+        >
           {/* =======================
              Team List
           ======================= */}

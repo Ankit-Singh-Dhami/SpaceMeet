@@ -2,7 +2,8 @@
 
 import { FileListContext } from "@/app/_context/FileListContext";
 import { useContext, useEffect, useState } from "react";
-import { Archive, MoreHorizontal, MoreVertical } from "lucide-react";
+import { MoreHorizontal, TrashIcon } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,24 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import fileId from "../../workspace/[fileId]/page";
+import { useConvex } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 /* =======================
    File Interface
 ======================= */
 export interface FILE {
-  _id: string;
+  _id: Id<"files">;
   fileName: string;
   createdBy: string;
   archive: boolean;
@@ -50,11 +43,25 @@ const FileList = () => {
   const [fileList, setFileList] = useState<FILE[]>([]);
   const router = useRouter();
 
+  const convex = useConvex();
+  const { refreshFileList } = useContext(FileListContext);
+
   useEffect(() => {
     if (Array.isArray(FileList_)) {
       setFileList(FileList_);
     }
   }, [FileList_]);
+
+  const onDeleteButton = async (fileId: Id<"files">) => {
+    if (!fileId) return;
+
+    const result = await convex.mutation(api.file.deleteFile, {
+      _id: fileId,
+    });
+    refreshFileList();
+
+    console.log("Delete result:", result);
+  };
 
   return (
     <div className="text-[0.7rem] mt-[1rem]">
@@ -101,15 +108,21 @@ const FileList = () => {
                   <td className="px-3 py-2 text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        className="p-1 rounded hover:bg-gray-200 transition"
+                        className="p-1 rounded hover:bg-gray-200 transition "
                         aria-label="More actions"
                       >
                         <MoreHorizontal size={14} />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem className="gap-[10px] z-50">
-                          <Archive />
-                          Archive
+                        <DropdownMenuItem
+                          className="text-red-600 hover:text-red-800 bg-white "
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteButton(file._id);
+                          }}
+                        >
+                          <TrashIcon /> {/* Replace with your delete icon */}
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
