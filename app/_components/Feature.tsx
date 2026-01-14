@@ -33,7 +33,7 @@ const Feature = () => {
               </svg>
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-900 text-violet-600">
+            <h3 className="mt-4 text-lg font-semibold text-blue-600">
               Team Collaboration
             </h3>
 
@@ -61,7 +61,7 @@ const Feature = () => {
               </svg>
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-900 text-violet-600">
+            <h3 className="mt-4 text-lg font-semibold text-blue-600">
               Secure Authentication
             </h3>
 
@@ -89,7 +89,7 @@ const Feature = () => {
               </svg>
             </div>
 
-            <h3 className="mt-4 text-lg font-semibold text-gray-900 text-violet-600">
+            <h3 className="mt-4 text-lg font-semibold text-blue-600">
               Real-Time Document Editor
             </h3>
 

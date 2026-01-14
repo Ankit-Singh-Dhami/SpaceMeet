@@ -13,7 +13,7 @@ const Excalidraw = dynamic(
 );
 export default function Canvas({ triggerSave, fileId, fileData }: any) {
   const [whiteBoardData, setWhiteBoardData] = useState<any>();
-  const updateWhiteBoard = useMutation(api.file.updateWhiteBoard);
+  const updateWhiteBoard = useMutation(api.files.updateWhiteBoard);
 
   useEffect(() => {
     triggerSave && saveWhiteBoard();

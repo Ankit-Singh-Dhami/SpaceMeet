@@ -1,76 +1,90 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Editor from "./_components/Editor";
 import Header from "./_components/Header";
+import Canvas from "./_components/Canvas";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Canvas from "./_components/Canvas";
 
-const FileId = ({ params }: any) => {
+type FileType = {
+  _id: Id<"files">;
+  fileName: string;
+  document: string;
+  whiteboard: string;
+  teamId: Id<"teams">;
+  createdBy: string;
+  archive: boolean;
+};
+
+const FileId = () => {
+  const convex = useConvex();
+  const params = useParams();
+
   const [fileId, setFileId] = useState<Id<"files"> | null>(null);
+  const [fileData, setFileData] = useState<FileType | null>(null);
   const [triggerSave, setTriggerSave] = useState(false);
-  const [fileData, setFileData] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"document" | "both" | "canvas">(
     "document"
-  ); // NEW
-  const convex = useConvex();
+  );
 
+  /* ✅ Resolve fileId */
   useEffect(() => {
-    const resolveParams = async () => {
-      const resolvedParams = await params;
-      setFileId(resolvedParams.fileId as Id<"files">);
-    };
-    resolveParams();
+    if (!params?.fileId) return;
+    setFileId(params.fileId as Id<"files">);
   }, [params]);
 
+  /* ✅ Fetch file */
   useEffect(() => {
+    if (!fileId) return;
+
     const fetchFile = async () => {
-      if (!fileId) return;
-      const result = await convex.query(api.file.getFileById, { _id: fileId });
+      const result = await convex.query(api.files.getFileById, {
+        _id: fileId,
+      });
       setFileData(result);
     };
+
     fetchFile();
   }, [fileId]);
 
   return (
     <div className="h-screen flex flex-col">
       <Header
-        onSave={() => setTriggerSave((prev) => !prev)}
+        onSave={() => setTriggerSave((p) => !p)}
         fileData={fileData}
-        setActiveTab={setActiveTab} // pass setter
+        setActiveTab={setActiveTab}
       />
 
       <div className="flex flex-1">
         {/* Editor */}
         <div
           className={`p-4 border-r transition-all duration-300
-      ${activeTab === "document" ? "w-full" : activeTab === "both" ? "w-1/2" : "w-0"}
-      ${activeTab === "canvas" ? "overflow-hidden" : ""}
-    `}
+            ${activeTab === "document" ? "w-full" : activeTab === "both" ? "w-1/2" : "w-0"}
+          `}
         >
-          {fileId && (
+          {fileId && fileData && (
             <Editor
               triggerSave={triggerSave}
               fileId={fileId}
-              fileData={fileData}
+              fileData={fileData.document}
             />
           )}
         </div>
 
         {/* Canvas */}
         <div
-          className={`h-screen transition-all duration-300
-      ${activeTab === "canvas" ? "w-full" : activeTab === "both" ? "w-1/2" : "w-0"}
-      ${activeTab === "document" ? "overflow-hidden" : ""}
-    `}
+          className={`transition-all duration-300
+            ${activeTab === "canvas" ? "w-full" : activeTab === "both" ? "w-1/2" : "w-0"}
+          `}
         >
-          {fileId && (
+          {fileId && fileData && (
             <Canvas
               triggerSave={triggerSave}
               fileId={fileId}
-              fileData={fileData}
+              fileData={fileData.whiteboard}
             />
           )}
         </div>

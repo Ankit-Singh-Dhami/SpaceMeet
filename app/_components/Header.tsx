@@ -6,7 +6,13 @@ export default function Header() {
     <header className="bg-white dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <img src="/logo.svg" alt="SpaceMeet Logo" className="h-10 w-10" />
+            <span className="text-xl font-bold text-gray-900">
+              Space<span className="text-blue-600">Meet</span>
+            </span>
+          </div>
+
           <div className="md:flex md:items-center md:gap-12">
             <a className="block text-teal-600 dark:text-teal-600" href="#">
               <span className="sr-only">Home</span>
@@ -22,7 +28,7 @@ export default function Header() {
           </div>
 
           {/* Nav */}
-          <div className="hidden md:block">
+          <div className="hidden md:block ml-[-150px]">
             <nav aria-label="Global">
               <ul className="flex items-center gap-6 text-sm">
                 {[
@@ -51,12 +57,12 @@ export default function Header() {
             <div className="sm:flex sm:gap-4">
               <LoginLink
                 postLoginRedirectURL="/dashboard"
-                className="rounded-md bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm dark:hover:bg-violet-500"
+                className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm dark:hover:bg-blue-500"
               >
                 Login
               </LoginLink>
 
-              <RegisterLink className="hidden sm:flex rounded-md bg-violet-100 px-5 py-2.5 text-sm font-medium text-violet-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75">
+              <RegisterLink className="hidden sm:flex rounded-md bg-blue-100 px-5 py-2.5 text-sm font-medium text-blue-600 dark:bg-gray-800 dark:text-white dark:hover:text-white/75">
                 Register
               </RegisterLink>
             </div>

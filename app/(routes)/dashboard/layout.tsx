@@ -1,51 +1,49 @@
 "use client";
 
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { useConvex } from "convex/react";
+import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import SideBar from "./_components/SideBar";
 import { FileListContext } from "@/app/_context/FileListContext";
+import { Id } from "@/convex/_generated/dataModel";
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const convex = useConvex();
   const { user }: any = useKindeBrowserClient();
   const router = useRouter();
 
-  const [FileList_, setFileList_] = useState<any[]>([]);
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const [selectedTeamId, setSelectedTeamId] = useState<Id<"teams"> | null>(
+    null
+  );
 
+  /* 🔹 Fetch teams */
+  const teams = useQuery(
+    api.team.getTeam,
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  /* 🔹 Redirect if no team */
   useEffect(() => {
-    user && checkTeam();
-  }, [user]);
+    if (!teams) return;
 
-  const checkTeam = async () => {
-    const result = await convex.query(api.team.getTeam, {
-      email: user?.email,
-    });
-
-    if (!result?.length) {
+    if (teams.length === 0) {
       router.push("/team/create");
     } else {
-      setSelectedTeamId(result[0]._id); // save teamId
-      refreshFileList(result[0]._id);
+      setSelectedTeamId(teams[0]._id);
     }
-  };
+  }, [teams]);
 
-  const refreshFileList = async (teamId = selectedTeamId) => {
-    if (!teamId) return;
-
-    const files = await convex.query(api.file.getFile, {
-      teamId,
-    });
-
-    setFileList_(files);
-  };
+  const files = useQuery(
+    api.files.getAccessibleFiles,
+    user?.email ? { email: user.email } : "skip"
+  );
 
   return (
     <FileListContext.Provider
-      value={{ FileList_, setFileList_, refreshFileList }}
+      value={{
+        FileList_: files ?? [],
+      }}
     >
       <div className="grid grid-cols-[220px_1fr] min-h-screen">
         <div className="h-screen">

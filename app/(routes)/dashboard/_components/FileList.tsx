@@ -3,22 +3,17 @@
 import { FileListContext } from "@/app/_context/FileListContext";
 import { useContext, useEffect, useState } from "react";
 import { MoreHorizontal, TrashIcon } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { useRouter } from "next/navigation";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-/* =======================
-   File Interface
-======================= */
 export interface FILE {
   _id: Id<"files">;
   fileName: string;
@@ -30,37 +25,22 @@ export interface FILE {
   _creationTime: number;
 }
 
-/* =======================
-   Helpers
-======================= */
 const getInitials = (email: string) => email?.charAt(0).toUpperCase();
 
-/* =======================
-   Component
-======================= */
 const FileList = () => {
-  const { FileList_ } = useContext(FileListContext);
+  const { FileList_, selectedTeamId, setSelectedTeamId } =
+    useContext(FileListContext);
   const [fileList, setFileList] = useState<FILE[]>([]);
   const router = useRouter();
-
   const convex = useConvex();
-  const { refreshFileList } = useContext(FileListContext);
 
   useEffect(() => {
-    if (Array.isArray(FileList_)) {
-      setFileList(FileList_);
-    }
+    if (Array.isArray(FileList_)) setFileList(FileList_);
   }, [FileList_]);
 
   const onDeleteButton = async (fileId: Id<"files">) => {
     if (!fileId) return;
-
-    const result = await convex.mutation(api.file.deleteFile, {
-      _id: fileId,
-    });
-    refreshFileList();
-
-    console.log("Delete result:", result);
+    await convex.mutation(api.files.deleteFile, { _id: fileId });
   };
 
   return (
@@ -77,7 +57,6 @@ const FileList = () => {
               <th className="px-3 py-2 text-center">Actions</th>
             </tr>
           </thead>
-
           <tbody className="divide-y divide-gray-200 *:even:bg-gray-50">
             {fileList.length > 0 ? (
               fileList.map((file) => (
@@ -86,16 +65,11 @@ const FileList = () => {
                   onClick={() => router.push("/workspace/" + file._id)}
                 >
                   <td className="px-3 py-2">{file.fileName}</td>
-
                   <td className="px-3 py-2">
                     {new Date(file._creationTime).toLocaleDateString()}
                   </td>
-
                   <td className="px-3 py-2">—</td>
-
                   <td className="px-3 py-2">{file.createdBy}</td>
-
-                  {/* Avatar */}
                   <td className="px-3 py-2 text-center">
                     <div className="flex justify-center">
                       <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-[0.65rem] font-semibold">
@@ -103,8 +77,6 @@ const FileList = () => {
                       </div>
                     </div>
                   </td>
-
-                  {/* Three Dot + Dialog */}
                   <td className="px-3 py-2 text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger
@@ -121,7 +93,7 @@ const FileList = () => {
                             onDeleteButton(file._id);
                           }}
                         >
-                          <TrashIcon /> {/* Replace with your delete icon */}
+                          <TrashIcon />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

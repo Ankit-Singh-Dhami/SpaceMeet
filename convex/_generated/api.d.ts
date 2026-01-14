@@ -8,7 +8,8 @@
  * @module
  */
 
-import type * as file from "../file.js";
+import type * as fileAccess from "../fileAccess.js";
+import type * as files from "../files.js";
 import type * as team from "../team.js";
 import type * as user from "../user.js";
 
@@ -19,7 +20,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  file: typeof file;
+  fileAccess: typeof fileAccess;
+  files: typeof files;
   team: typeof team;
   user: typeof user;
 }>;

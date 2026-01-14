@@ -30,9 +30,7 @@ export default function Header({ onSave, fileData, setActiveTab }: any) {
     <header className="flex items-center justify-between px-3 py-1.5 border-b bg-white">
       {/* LEFT */}
       <div className="flex items-center gap-2 min-w-0">
-        <div className="h-6 w-6 rounded bg-black text-white flex items-center justify-center text-xs font-semibold">
-          R
-        </div>
+        <img src="/logo.svg" alt="SpaceMeet Logo" className="h-8 w-8" />
         <span className="text-sm font-medium truncate max-w-[120px] sm:max-w-[180px]">
           {fileData?.fileName || "Untitled"}
         </span>

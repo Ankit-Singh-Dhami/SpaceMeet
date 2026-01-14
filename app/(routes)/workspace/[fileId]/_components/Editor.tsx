@@ -20,7 +20,7 @@ function Editor({
   fileData: any;
 }) {
   const editorRef = useRef<any>(null);
-  const updateDocument = useMutation(api.file.updateDocument);
+  const updateDocument = useMutation(api.files.updateDocument);
 
   // Local state to track editor data live
   const [documentData, setDocumentData] = useState(

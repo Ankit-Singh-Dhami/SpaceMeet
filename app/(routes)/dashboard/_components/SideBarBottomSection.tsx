@@ -42,7 +42,7 @@ const SideBarBottomSection = ({ user, selectedTeam }: any) => {
   /* =======================
      Create File Handler
   ======================= */
-  const createFile = useMutation(api.file.createFile);
+  const createFile = useMutation(api.files.createFile);
 
   const handleCreateFile = async () => {
     if (!fileName.trim()) {

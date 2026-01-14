@@ -12,14 +12,16 @@ import { useConvex } from "convex/react";
 import { useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { Id } from "@/convex/_generated/dataModel";
 
 /* =======================
    Types
 ======================= */
 export interface Team {
-  createdBy: string;
+  _id: Id<"teams">;
+  createBy: string;
   teamName: string;
-  _id: string;
+  _creationTime: number;
 }
 
 export interface User {
@@ -112,7 +114,7 @@ const SideBarTopSection: React.FC<SideBarTopSectionProps> = ({
             className="flex items-center gap-2 mt-4 ml-4 px-2 py-1 rounded-lg
                        hover:bg-[rgba(211,211,211,0.3)] transition-all"
           >
-            <div className="h-[30px] w-[30px] rounded-full bg-black" />
+            <img src="/logo.svg" alt="SpaceMeet Logo" className="h-8 w-8" />
             <div className="text-[0.9rem] font-semibold">
               {selectedTeam?.teamName || "Team Name"}
             </div>
@@ -124,15 +126,11 @@ const SideBarTopSection: React.FC<SideBarTopSectionProps> = ({
           align="start"
           className="w-50 p-1 bg-white dark:bg-gray-900  shadow-md"
         >
-          {/* =======================
-             Team List
-          ======================= */}
           {teamList.length === 0 ? (
             <div className="px-3 py-2 text-sm text-gray-400">No Teams</div>
           ) : (
             teamList.map((team) => {
               const isSelected = selectedTeam?._id === team._id;
-
               return (
                 <div
                   key={team._id}
@@ -157,17 +155,11 @@ const SideBarTopSection: React.FC<SideBarTopSectionProps> = ({
 
           <hr className="my-2 opacity-30" />
 
-          {/* =======================
-             Menu
-          ======================= */}
           <ul className="flex flex-col">
             {Menu.map((item) => {
               const Icon = item.icon;
-
               const hoverClasses =
-                "flex items-center gap-2 px-3 py-2 text-sm rounded-md " +
-                "transition-all duration-200 ease-in-out " +
-                "hover:bg-gray-100 hover:pl-5 cursor-pointer";
+                "flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all duration-200 ease-in-out hover:bg-gray-100 hover:pl-5 cursor-pointer";
 
               return (
                 <li key={item.label}>
@@ -196,9 +188,6 @@ const SideBarTopSection: React.FC<SideBarTopSectionProps> = ({
 
           <hr className="my-2 opacity-30" />
 
-          {/* =======================
-             User Info
-          ======================= */}
           {user && (
             <div className="flex items-center gap-2 px-3 py-2">
               {user.picture ? (

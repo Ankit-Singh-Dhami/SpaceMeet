@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+* {
+  cursor: none !important;
+}
+
+input,
+textarea,
+select {
+  cursor: text !important;
+}
+
 /* H1 Header */
 h1.ce-header {
   @apply text-3xl font-bold;
@@ -29,4 +39,9 @@ h5.ce-header {
 /* H6 Header */
 h6.ce-header {
   @apply text-base font-medium;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
